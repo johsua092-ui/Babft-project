@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #0a0a0a;
+  --color-foreground: #ededed;
+  --color-neon: #00ff6a;
+  --color-neon-dim: #00cc55;
+  --color-neon-glow: #00ff6a40;
+  --color-surface: #141414;
+  --color-surface-hover: #1a1a1a;
+  --color-border: #2a2a2a;
+  --color-muted: #888888;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+.neon-btn {
+  position: relative;
+  background: linear-gradient(135deg, #00ff6a, #00cc55);
+  color: #0a0a0a;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px var(--color-neon-glow), 0 0 40px var(--color-neon-glow);
+}
+
+.neon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px var(--color-neon-glow), 0 0 60px var(--color-neon-glow);
+}
+
+.neon-btn:active {
+  transform: translateY(0);
+}
+
+.gradient-text {
+  background: linear-gradient(180deg, #4ade80, #166534);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-neon);
+  box-shadow: 0 0 15px var(--color-neon-glow);
+}
+
+.card-btn-special {
+  background: linear-gradient(135deg, #00ff6a15, #00ff6a05);
+  border: 1px solid var(--color-neon);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card-btn-special:hover {
+  background: linear-gradient(135deg, #00ff6a25, #00ff6a10);
+  box-shadow: 0 0 20px var(--color-neon-glow);
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: var(--color-foreground);
+  color: var(--color-foreground);
+}
+
+.gate-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.gate-card:hover {
+  border-color: var(--color-neon);
+  box-shadow: 0 0 20px var(--color-neon-glow);
+  transform: translateY(-2px);
+}
+
+.gate-card.active {
+  border-color: var(--color-neon);
+  box-shadow: 0 0 25px var(--color-neon-glow);
+}
+
+.coming-soon {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--color-neon-glow); }
+  50% { box-shadow: 0 0 40px var(--color-neon-glow), 0 0 60px var(--color-neon-glow); }
+}
+
+.animate-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.animate-fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.animate-fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.animate-fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
