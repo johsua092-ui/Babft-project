@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #1a1d23;
+  --color-background: #1e2128;
   --color-foreground: #e8eaed;
   --color-neon: #00ff6a;
   --color-neon-dim: #00cc55;
   --color-neon-glow: #00ff6a40;
-  --color-surface: #22262e;
-  --color-surface-hover: #2a2f38;
-  --color-surface-raised: #282c34;
-  --color-border: #363b44;
-  --color-border-light: #454b55;
+  --color-surface: #252932;
+  --color-surface-hover: #2d323d;
+  --color-surface-raised: #2a2e37;
+  --color-border: #383d48;
+  --color-border-light: #484e5a;
   --color-muted: #8b919a;
   --color-silver: #c0c4cc;
   --font-sans: var(--font-geist-sans);
@@ -38,17 +38,34 @@ body {
   border: none;
   border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px var(--color-neon-glow), 0 0 40px var(--color-neon-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 20px var(--color-neon-glow), 0 0 40px var(--color-neon-glow);
+  overflow: hidden;
+}
+
+.neon-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 .neon-btn:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px var(--color-neon-glow), 0 0 60px var(--color-neon-glow), 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 30px var(--color-neon-glow), 0 0 60px var(--color-neon-glow), 0 10px 40px rgba(0,0,0,0.4);
 }
 
 .neon-btn:active {
   transform: translateY(0) scale(0.98);
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
 }
 
 .gradient-text {
@@ -62,20 +79,19 @@ body {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .card-btn:hover {
-  background: var(--color-surface-hover);
   border-color: var(--color-neon);
   box-shadow: 0 0 20px var(--color-neon-glow), 0 4px 16px rgba(0,0,0,0.3);
   transform: translateY(-2px);
 }
 
 .card-btn-special {
-  background: linear-gradient(135deg, #00ff6a12, #00ff6a06);
+  background: linear-gradient(135deg, rgba(0,255,106,0.07), rgba(0,255,106,0.03));
   border: 1px solid var(--color-neon);
   border-radius: 16px;
   transition: all 0.3s ease;
@@ -84,7 +100,6 @@ body {
 }
 
 .card-btn-special:hover {
-  background: linear-gradient(135deg, #00ff6a22, #00ff6a12);
   box-shadow: 0 0 25px var(--color-neon-glow), 0 4px 16px rgba(0,0,0,0.3);
   transform: translateY(-2px);
 }
@@ -95,7 +110,7 @@ body {
   border-radius: 12px;
   color: var(--color-muted);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .back-btn:hover {
@@ -104,34 +119,26 @@ body {
   background: var(--color-surface-hover);
 }
 
-.gate-card {
+.gate-card-base {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 14px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.gate-card:hover {
-  border-color: var(--color-neon);
-  box-shadow: 0 0 20px var(--color-neon-glow), 0 4px 12px rgba(0,0,0,0.25);
-  transform: translateY(-2px);
-  background: var(--color-surface-hover);
+.gate-card-base:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
 
-.gate-card.active {
-  border-color: var(--color-neon);
-  box-shadow: 0 0 25px var(--color-neon-glow), 0 0 50px rgba(0,255,106,0.1);
-  background: linear-gradient(135deg, #00ff6a08, #00ff6a03);
+.wire-active {
+  stroke-dasharray: 4 2;
+  animation: wire-flow 0.6s linear infinite;
 }
 
-.glass-panel {
-  background: rgba(34, 38, 46, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+@keyframes wire-flow {
+  to { stroke-dashoffset: -6; }
 }
 
 @keyframes pulse-glow {
@@ -161,11 +168,14 @@ body {
   animation: slide-up 0.5s ease-out forwards;
 }
 
-.animate-fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
-.animate-fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
-.animate-fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
-.animate-fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
-.animate-fade-in-delay-5 { animation-delay: 0.5s; opacity: 0; }
+.animate-fade-in-delay-1 { animation-delay: 0.08s; opacity: 0; }
+.animate-fade-in-delay-2 { animation-delay: 0.16s; opacity: 0; }
+.animate-fade-in-delay-3 { animation-delay: 0.24s; opacity: 0; }
+.animate-fade-in-delay-4 { animation-delay: 0.32s; opacity: 0; }
+.animate-fade-in-delay-5 { animation-delay: 0.40s; opacity: 0; }
+.animate-fade-in-delay-6 { animation-delay: 0.48s; opacity: 0; }
+.animate-fade-in-delay-7 { animation-delay: 0.56s; opacity: 0; }
+.animate-fade-in-delay-8 { animation-delay: 0.64s; opacity: 0; }
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -182,4 +192,12 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
