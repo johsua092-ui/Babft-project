@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Cpu, CircuitBoard, ArrowLeft, FlaskConical } from "lucide-react";
+import { ArrowLeft, Cpu, CircuitBoard, FlaskConical } from "lucide-react";
 
 export default function LogicGatesPage() {
   return (
@@ -18,22 +18,28 @@ export default function LogicGatesPage() {
 
         <div className="flex flex-col gap-4 w-full">
           <Link href="/logic-gates/basic-gates" className="animate-fade-in animate-fade-in-delay-1">
-            <div className="card-btn flex items-center gap-4 px-6 py-6">
-              <Cpu className="w-8 h-8 text-neon" />
+            <div className="card-btn group flex items-center gap-4 px-6 py-6">
+              <div className="p-2 rounded-xl bg-neon/10 text-neon">
+                <Cpu className="w-7 h-7" />
+              </div>
               <span className="text-xl font-semibold">7 Basic Logic Gates</span>
             </div>
           </Link>
 
           <Link href="/coming-soon" className="animate-fade-in animate-fade-in-delay-2">
-            <div className="card-btn flex items-center gap-4 px-6 py-6">
-              <CircuitBoard className="w-8 h-8 text-sky-400" />
+            <div className="card-btn group flex items-center gap-4 px-6 py-6">
+              <div className="p-2 rounded-xl bg-sky-400/10 text-sky-400">
+                <CircuitBoard className="w-7 h-7" />
+              </div>
               <span className="text-xl font-semibold">Logic Gates Circuit</span>
             </div>
           </Link>
 
           <Link href="/coming-soon" className="animate-fade-in animate-fade-in-delay-3">
-            <div className="card-btn-special flex items-center gap-4 px-6 py-6">
-              <FlaskConical className="w-8 h-8 text-neon" />
+            <div className="card-btn-special group flex items-center gap-4 px-6 py-6">
+              <div className="p-2 rounded-xl bg-neon/10 text-neon">
+                <FlaskConical className="w-7 h-7" />
+              </div>
               <span className="text-xl font-semibold">Create Logic Gates Simulator</span>
             </div>
           </Link>

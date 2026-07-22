@@ -8,7 +8,7 @@ export default function Home() {
           Welcome
         </h1>
 
-        <div className="w-64 h-48 sm:w-80 sm:h-56 rounded-2xl border-2 border-dashed border-border bg-surface flex items-center justify-center">
+        <div className="w-64 h-48 sm:w-80 sm:h-56 rounded-2xl border-2 border-dashed border-border bg-surface/50 flex items-center justify-center backdrop-blur-sm">
           <span className="text-muted text-sm text-center px-4">
             Insert your image here
           </span>
