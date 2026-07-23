@@ -1,0 +1,6 @@
+- [Project Overview](project-overview.md) — BABFT Learning SPA: dark-theme React+Vite, single App.tsx, all screens via useState
+- [Styling Rules](styling-rules.md) — inline styles with !important required; CSS variables fail in Replit iframe
+- [Screens & Navigation](screens-navigation.md) — welcome → menu → logic-gates/basic-logic-gates/gears/linkages
+- [Data Arrays](data-arrays.md) — GEAR_TYPES (36), LINKAGE_TYPES (45), logic gate cards (8)
+- [SVG Components](svg-components.md) — GearIconSVG (switch/case + gearPath helper), LinkageIconSVG (B/J/FP/Rail/Slider helpers)
+- [Search Feature](search-feature.md) — gearSearch + linkSearch state, IIFE filter pattern, reset on Back
