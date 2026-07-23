@@ -127,25 +127,46 @@ function WireDiagram({
   b: boolean;
   out: boolean;
 }) {
-  const activeColor = definition.color;
-  const offColor = "#3a3f48";
+  const offColor = "#41524c";
   const wire = (active: boolean) => ({
-    stroke: active ? activeColor : offColor,
-    strokeWidth: active ? 3 : 2,
+    stroke: active ? definition.color : offColor,
+    strokeWidth: active ? 4 : 2.5,
     className: active ? "wire-active" : undefined,
   });
+  const node = (x: number, y: number, active: boolean, label: string) => (
+    <g>
+      <circle
+        cx={x}
+        cy={y}
+        r="5.5"
+        fill={active ? definition.color : "var(--color-surface-raised)"}
+        stroke={active ? definition.color : offColor}
+        strokeWidth="2"
+      />
+      <text x={x} y={y - 12} textAnchor="middle" className="wire-label">
+        {label}
+      </text>
+    </g>
+  );
 
   return (
-    <svg aria-hidden="true" focusable="false" viewBox="0 0 260 104" className="absolute inset-0 h-full w-full">
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 260 112" className="absolute inset-0 h-full w-full">
+      <path d="M12 56H248" fill="none" stroke="#23332e" strokeWidth="18" strokeLinecap="round" opacity="0.35" />
       {definition.inputs === 1 ? (
-        <path d="M8 52H84" fill="none" {...wire(a)} />
+        <>
+          <path d="M16 56H88" fill="none" strokeLinecap="round" {...wire(a)} />
+          {node(16, 56, a, "A")}
+        </>
       ) : (
         <>
-          <path d="M8 34H78C88 34 92 42 98 52" fill="none" {...wire(a)} />
-          <path d="M8 70H78C88 70 92 62 98 52" fill="none" {...wire(b)} />
+          <path d="M16 34H72C88 34 92 46 102 56" fill="none" strokeLinecap="round" strokeLinejoin="round" {...wire(a)} />
+          <path d="M16 78H72C88 78 92 66 102 56" fill="none" strokeLinecap="round" strokeLinejoin="round" {...wire(b)} />
+          {node(16, 34, a, "A")}
+          {node(16, 78, b, "B")}
         </>
       )}
-      <path d="M176 52H252" fill="none" {...wire(out)} />
+      <path d="M172 56H244" fill="none" strokeLinecap="round" {...wire(out)} />
+      {node(244, 56, out, "OUT")}
     </svg>
   );
 }
@@ -209,7 +230,7 @@ function GateCard({ definition, delayClass }: { definition: GateDefinition; dela
         <header className="flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-[11px] tracking-[0.22em] text-muted/70">
-              {String(definition.index).padStart(2, "0")} / {definition.gate}
+              {String(definition.index).padStart(2, "0")} ● {definition.gate}
             </p>
             <h3 className="mt-1 text-lg font-semibold">{definition.label}</h3>
           </div>
@@ -244,7 +265,6 @@ function GateCard({ definition, delayClass }: { definition: GateDefinition; dela
             {" "}→ OUT=<span className="font-bold" style={{ color: out ? definition.color : undefined }}>{bit(out)}</span>
           </p>
           <p className="text-sm leading-relaxed text-muted">{definition.description}</p>
-          <p className="rounded-lg border border-border/70 bg-background/30 px-3 py-2 font-mono text-xs text-silver">{definition.rule}</p>
         </div>
       </div>
 
@@ -279,11 +299,7 @@ export default function BasicGatesPage() {
         </Link>
 
         <header className="mx-auto mb-8 max-w-3xl text-center">
-          <p className="mb-2 font-mono text-xs uppercase tracking-[0.28em] text-muted">Interactive truth tables</p>
-          <h1 className="gradient-text text-3xl font-bold sm:text-5xl">Basic Logic Gates</h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-            Toggle each input and watch the signal path, output lamp, and truth table update together.
-          </p>
+          <h1 className="gradient-text text-3xl font-bold sm:text-5xl">7 Basic Logic Gates</h1>
         </header>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
