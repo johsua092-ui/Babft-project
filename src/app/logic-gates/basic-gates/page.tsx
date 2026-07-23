@@ -2,280 +2,191 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { bit, gateDefinitions, getTruthRows, type GateDefinition, type GateKey } from "../data";
 
-type GateKey = "WIRE" | "NOT" | "AND" | "NAND" | "OR" | "NOR" | "XOR" | "XNOR";
-
-const themes: Record<GateKey, { color: string; label: string }> = {
-  WIRE: { color: "#60a5fa", label: "Basic Wire" },
-  NOT: { color: "#ef4444", label: "NOT Gate" },
-  AND: { color: "#22c55e", label: "AND Gate" },
-  NAND: { color: "#f97316", label: "NAND Gate" },
-  OR: { color: "#3b82f6", label: "OR Gate" },
-  NOR: { color: "#a855f7", label: "NOR Gate" },
-  XOR: { color: "#14b8a6", label: "XOR Gate" },
-  XNOR: { color: "#ec4899", label: "XNOR Gate" },
-};
-
-const descriptions: Record<GateKey, string> = {
-  WIRE: "Output EXACTLY follows input",
-  NOT: "Output is INVERTED from input",
-  AND: "Output is 1 only if BOTH inputs are 1",
-  NAND: "Output is 0 only if BOTH inputs are 1",
-  OR: "Output is 1 if AT LEAST ONE input is 1",
-  NOR: "Output is 0 if AT LEAST ONE input is 1",
-  XOR: "Output is 1 if inputs are DIFFERENT",
-  XNOR: "Output is 1 if inputs are SAME",
-};
-
-interface GateInfo {
-  gate: GateKey;
-  index: number;
-  inputs: number;
-  fn: (a: boolean, b: boolean) => boolean;
-}
-
-const gateDefs: GateInfo[] = [
-  { gate: "WIRE", index: 1, inputs: 1, fn: (a) => a },
-  { gate: "NOT", index: 2, inputs: 1, fn: (a) => !a },
-  { gate: "AND", index: 3, inputs: 2, fn: (a, b) => a && b },
-  { gate: "NAND", index: 4, inputs: 2, fn: (a, b) => !(a && b) },
-  { gate: "OR", index: 5, inputs: 2, fn: (a, b) => a || b },
-  { gate: "NOR", index: 6, inputs: 2, fn: (a, b) => !(a || b) },
-  { gate: "XOR", index: 7, inputs: 2, fn: (a, b) => a !== b },
-  { gate: "XNOR", index: 8, inputs: 2, fn: (a, b) => a === b },
-];
-
-function GateSymbol({ gate, color }: { gate: GateKey; color: string }) {
-  const sw = 1.8;
+function GateSymbol({ gate, color, active }: { gate: GateKey; color: string; active: boolean }) {
+  const stroke = active ? color : "#6b7280";
+  const common = {
+    fill: "none",
+    stroke,
+    strokeWidth: 2.2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
 
   if (gate === "WIRE") {
     return (
-      <svg width="100" height="40" className="overflow-visible">
-        <line x1="0" y1="20" x2="100" y2="20" stroke={color} strokeWidth="2.5" />
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 120 64" className="h-16 w-28">
+        <path d="M10 32H110" {...common} />
       </svg>
     );
   }
 
   return (
-    <svg width="100" height="56" className="overflow-visible">
-      {(() => {
-        const cx = 50;
-        const cy = 28;
-
-        switch (gate) {
-          case "NOT":
-            return (
-              <g fill="none" stroke={color} strokeWidth={sw}>
-                <path d={`M${cx - 20},${cy - 16} L${cx + 12},${cy} L${cx - 20},${cy + 16} Z`} />
-                <circle cx={cx + 16} cy={cy} r="4" />
-              </g>
-            );
-          case "AND":
-            return (
-              <path
-                d={`M${cx - 20},${cy - 16} L${cx - 6},${cy - 16} C${cx + 18},${cy - 16} ${cx + 22},${cy - 8} ${cx + 22},${cy} C${cx + 22},${cy + 8} ${cx + 18},${cy + 16} ${cx - 6},${cy + 16} L${cx - 20},${cy + 16} Z`}
-                fill="none"
-                stroke={color}
-                strokeWidth={sw}
-              />
-            );
-          case "NAND":
-            return (
-              <g fill="none" stroke={color} strokeWidth={sw}>
-                <path d={`M${cx - 20},${cy - 16} L${cx - 6},${cy - 16} C${cx + 16},${cy - 16} ${cx + 20},${cy - 8} ${cx + 20},${cy} C${cx + 20},${cy + 8} ${cx + 16},${cy + 16} ${cx - 6},${cy + 16} L${cx - 20},${cy + 16} Z`} />
-                <circle cx={cx + 24} cy={cy} r="4" />
-              </g>
-            );
-          case "OR":
-            return (
-              <path
-                d={`M${cx - 22},${cy - 16} C${cx - 10},${cy - 16} ${cx - 2},${cy - 6} ${cx + 10},${cy} C${cx - 2},${cy + 6} ${cx - 10},${cy + 16} ${cx - 22},${cy + 16} C${cx - 14},${cy + 6} ${cx - 14},${cy - 6} ${cx - 22},${cy - 16} Z`}
-                fill="none"
-                stroke={color}
-                strokeWidth={sw}
-              />
-            );
-          case "NOR":
-            return (
-              <g fill="none" stroke={color} strokeWidth={sw}>
-                <path d={`M${cx - 22},${cy - 16} C${cx - 10},${cy - 16} ${cx - 2},${cy - 6} ${cx + 8},${cy} C${cx - 2},${cy + 6} ${cx - 10},${cy + 16} ${cx - 22},${cy + 16} C${cx - 14},${cy + 6} ${cx - 14},${cy - 6} ${cx - 22},${cy - 16} Z`} />
-                <circle cx={cx + 12} cy={cy} r="4" />
-              </g>
-            );
-          case "XOR":
-            return (
-              <g fill="none" stroke={color} strokeWidth={sw}>
-                <path d={`M${cx - 22},${cy - 16} C${cx - 10},${cy - 16} ${cx - 2},${cy - 6} ${cx + 10},${cy} C${cx - 2},${cy + 6} ${cx - 10},${cy + 16} ${cx - 22},${cy + 16} C${cx - 14},${cy + 6} ${cx - 14},${cy - 6} ${cx - 22},${cy - 16} Z`} />
-                <path d={`M${cx - 26},${cy - 16} C${cx - 14},${cy - 16} ${cx - 6},${cy - 6} ${cx + 6},${cy} C${cx - 6},${cy + 6} ${cx - 14},${cy + 16} ${cx - 26},${cy + 16}`} />
-              </g>
-            );
-          case "XNOR":
-            return (
-              <g fill="none" stroke={color} strokeWidth={sw}>
-                <path d={`M${cx - 22},${cy - 16} C${cx - 10},${cy - 16} ${cx - 2},${cy - 6} ${cx + 8},${cy} C${cx - 2},${cy + 6} ${cx - 10},${cy + 16} ${cx - 22},${cy + 16} C${cx - 14},${cy + 6} ${cx - 14},${cy - 6} ${cx - 22},${cy - 16} Z`} />
-                <path d={`M${cx - 26},${cy - 16} C${cx - 14},${cy - 16} ${cx - 6},${cy - 6} ${cx + 4},${cy} C${cx - 6},${cy + 6} ${cx - 14},${cy + 16} ${cx - 26},${cy + 16}`} />
-                <circle cx={cx + 12} cy={cy} r="4" />
-              </g>
-            );
-          default:
-            return null;
-        }
-      })()}
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 120 64" className="h-16 w-28">
+      {gate === "NOT" && (
+        <g {...common}>
+          <path d="M34 16v32l32-16z" />
+          <circle cx="74" cy="32" r="5" />
+        </g>
+      )}
+      {gate === "AND" && <path d="M32 16h18a16 16 0 0 1 0 32H32z" {...common} />}
+      {gate === "NAND" && (
+        <g {...common}>
+          <path d="M30 16h18a16 16 0 0 1 0 32H30z" />
+          <circle cx="70" cy="32" r="5" />
+        </g>
+      )}
+      {gate === "OR" && <path d="M26 16c18 0 31 6 48 16-17 10-30 16-48 16 8-10 8-22 0-32z" {...common} />}
+      {gate === "NOR" && (
+        <g {...common}>
+          <path d="M24 16c18 0 31 6 48 16-17 10-30 16-48 16 8-10 8-22 0-32z" />
+          <circle cx="80" cy="32" r="5" />
+        </g>
+      )}
+      {gate === "XOR" && (
+        <g {...common}>
+          <path d="M30 16c18 0 31 6 48 16-17 10-30 16-48 16 8-10 8-22 0-32z" />
+          <path d="M20 16c8 10 8 22 0 32" />
+        </g>
+      )}
+      {gate === "XNOR" && (
+        <g {...common}>
+          <path d="M28 16c18 0 31 6 48 16-17 10-30 16-48 16 8-10 8-22 0-32z" />
+          <path d="M18 16c8 10 8 22 0 32" />
+          <circle cx="84" cy="32" r="5" />
+        </g>
+      )}
     </svg>
   );
 }
 
-function InputNode({
+function SignalButton({
   label,
   value,
   color,
-  onClick,
+  onToggle,
 }: {
   label: string;
   value: boolean;
   color: string;
-  onClick: () => void;
+  onToggle: () => void;
 }) {
   return (
     <button
-      onClick={onClick}
-      className="flex flex-col items-center gap-0.5 cursor-pointer select-none focus:outline-none"
-      aria-label={`Toggle input ${label}`}
+      type="button"
+      aria-pressed={value}
+      onClick={onToggle}
+      className="group flex flex-col items-center gap-1 rounded-xl p-1.5 focus-visible:outline-2 focus-visible:outline-offset-2"
+      style={{ outlineColor: color }}
     >
-      <span className="text-[9px] text-[10px] font-medium tracking-wider text-muted">{label}</span>
-      <div
-        className="size-8 size-9 rounded-lg border flex items-center justify-center transition-all duration-200"
+      <span className="text-[10px] font-mono tracking-[0.2em] text-muted">{label}</span>
+      <span
+        className="grid size-10 place-items-center rounded-xl border font-mono text-sm font-bold transition"
         style={{
           borderColor: value ? color : "var(--color-border)",
-          background: value ? `${color}20` : "var(--color-surface-raised)",
-          boxShadow: value ? `0 0 14px ${color}50, inset 0 0 8px ${color}20` : "inset 0 1px 2px rgba(0,0,0,0.3)",
-          transform: value ? "scale(1.05)" : "scale(1)",
+          background: value ? `${color}22` : "var(--color-surface-raised)",
+          color: value ? color : "var(--color-muted)",
+          boxShadow: value ? `0 0 18px ${color}55, inset 0 0 10px ${color}20` : "inset 0 1px 2px rgba(0,0,0,0.35)",
         }}
       >
-        <span
-          className="text-xs text-sm font-bold font-mono transition-colors duration-200"
-          style={{ color: value ? color : "#555" }}
-        >
-          {value ? "1" : "Ø"}
-        </span>
-      </div>
-      <span className="text-[8px] text-[9px] font-mono text-muted/50">{value ? "1" : "0"}</span>
+        {bit(value)}
+      </span>
     </button>
   );
 }
 
-function OutputNode({ value, color }: { value: boolean; color: string }) {
+function OutputLamp({ value, color }: { value: boolean; color: string }) {
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[9px] text-[10px] font-medium tracking-wider text-muted">OUT</span>
-      <div
-        className="size-8 size-9 rounded-full flex items-center justify-center transition-all duration-200"
+    <div className="flex flex-col items-center gap-1" aria-label={`Output ${bit(value)}`}>
+      <span className="text-[10px] font-mono tracking-[0.2em] text-muted">OUT</span>
+      <span
+        className="grid size-11 place-items-center rounded-full border-2 font-mono text-sm font-bold transition"
         style={{
+          borderColor: value ? color : "var(--color-border)",
           background: value ? `${color}25` : "var(--color-surface-raised)",
-          border: `2px solid ${value ? color : "var(--color-border)"}`,
-          boxShadow: value ? `0 0 16px ${color}60, inset 0 0 8px ${color}20` : "inset 0 1px 2px rgba(0,0,0,0.3)",
-          transform: value ? "scale(1.05)" : "scale(1)",
+          color: value ? color : "var(--color-muted)",
+          boxShadow: value ? `0 0 24px ${color}66, inset 0 0 12px ${color}20` : "inset 0 1px 2px rgba(0,0,0,0.35)",
         }}
       >
-        <span
-          className="text-xs text-sm font-bold font-mono transition-colors duration-200"
-          style={{ color: value ? color : "#555" }}
-        >
-          {value ? "1" : "Ø"}
-        </span>
-      </div>
+        {bit(value)}
+      </span>
     </div>
   );
 }
 
-function Wires({ gate, a, b, out, color }: { gate: GateKey; a: boolean; b: boolean; out: boolean; color: string }) {
-  const wireOff = "#3a3f48";
-  const wireProps = (active: boolean) => ({
-    stroke: active ? color : wireOff,
-    strokeWidth: active ? "2.5" : "1.5",
-    className: active ? "wire-active" : "",
-    style: { transition: "stroke 0.2s, stroke-width 0.2s" },
+function WireDiagram({
+  definition,
+  a,
+  b,
+  out,
+}: {
+  definition: GateDefinition;
+  a: boolean;
+  b: boolean;
+  out: boolean;
+}) {
+  const activeColor = definition.color;
+  const offColor = "#3a3f48";
+  const wire = (active: boolean) => ({
+    stroke: active ? activeColor : offColor,
+    strokeWidth: active ? 3 : 2,
+    className: active ? "wire-active" : undefined,
   });
 
   return (
-    <svg className="absolute inset-0 w-full h-full" style={{ overflow: "visible" }}>
-      {gate === "WIRE" ? (
-        <line x1="20%" y1="50%" x2="80%" y2="50%" {...wireProps(a)} />
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 260 104" className="absolute inset-0 h-full w-full">
+      {definition.inputs === 1 ? (
+        <path d="M8 52H84" fill="none" {...wire(a)} />
       ) : (
         <>
-          <line x1="22%" y1="36%" x2="55%" y2="36%" {...wireProps(a)} />
-          <line x1="22%" y1="64%" x2="55%" y2="64%" {...wireProps(b)} />
-          <path
-            d="M55%,36% C58%,36% 60%,42% 60%,50%"
-            fill="none"
-            {...wireProps(a)}
-          />
-          <path
-            d="M55%,64% C58%,64% 60%,58% 60%,50%"
-            fill="none"
-            {...wireProps(b)}
-          />
+          <path d="M8 34H78C88 34 92 42 98 52" fill="none" {...wire(a)} />
+          <path d="M8 70H78C88 70 92 62 98 52" fill="none" {...wire(b)} />
         </>
       )}
-      <line x1="72%" y1="50%" x2="80%" y2="50%" {...wireProps(out)} />
+      <path d="M176 52H252" fill="none" {...wire(out)} />
     </svg>
   );
 }
 
 function TruthTable({
-  info,
+  definition,
   a,
   b,
-  color,
 }: {
-  info: GateInfo;
+  definition: GateDefinition;
   a: boolean;
   b: boolean;
-  color: string;
 }) {
-  const rows = info.inputs === 1
-    ? [{ a: false, out: info.fn(false, false) }, { a: true, out: info.fn(true, false) }]
-    : [
-        { a: false, b: false, out: info.fn(false, false) },
-        { a: false, b: true, out: info.fn(false, true) },
-        { a: true, b: false, out: info.fn(true, false) },
-        { a: true, b: true, out: info.fn(true, true) },
-      ];
-
   return (
-    <table className="w-full text-[11px] text-xs border-collapse">
+    <table className="w-full border-collapse text-xs">
+      <caption className="sr-only">{definition.label} truth table</caption>
       <thead>
         <tr className="border-b border-border">
-          <th className="py-1 pr-2 text-left font-medium text-muted/60">A</th>
-          {info.inputs === 2 && <th className="py-1 pr-2 text-left font-medium text-muted/60">B</th>}
-          <th className="py-1 text-left font-medium text-muted/60">OUT</th>
+          <th scope="col" className="py-1.5 pr-2 text-left font-mono text-muted/70">A</th>
+          {definition.inputs === 2 && <th scope="col" className="py-1.5 pr-2 text-left font-mono text-muted/70">B</th>}
+          <th scope="col" className="py-1.5 text-left font-mono text-muted/70">OUT</th>
         </tr>
       </thead>
       <tbody>
-        {rows.map((row, i) => {
-          const isActive = info.inputs === 1
-            ? row.a === a
-            : row.a === a && (row as any).b === b;
+        {getTruthRows(definition).map((row) => {
+          const isActive = definition.inputs === 1 ? row.a === a : row.a === a && row.b === b;
+
           return (
             <tr
-              key={i}
-              className="border-b border-border/30 transition-colors duration-150"
+              key={`${bit(row.a)}-${bit(Boolean(row.b))}-${bit(row.out)}`}
+              className="border-b border-border/30"
               style={{
-                background: isActive ? `${color}15` : "transparent",
-                boxShadow: isActive ? `inset 2px 0 0 ${color}` : "none",
+                background: isActive ? `${definition.color}16` : "transparent",
+                boxShadow: isActive ? `inset 2px 0 0 ${definition.color}` : "none",
               }}
             >
-              <td className="py-1 pr-2 font-mono" style={{ color: isActive && row.a ? color : "var(--color-muted)" }}>
-                {row.a ? "1" : "0"}
-              </td>
-              {info.inputs === 2 && (
-                <td className="py-1 pr-2 font-mono" style={{ color: isActive && (row as any).b ? color : "var(--color-muted)" }}>
-                  {(row as any).b ? "1" : "0"}
-                </td>
+              <td className="py-1.5 pr-2 font-mono" style={{ color: row.a ? definition.color : "var(--color-muted)" }}>{bit(row.a)}</td>
+              {definition.inputs === 2 && (
+                <td className="py-1.5 pr-2 font-mono" style={{ color: row.b ? definition.color : "var(--color-muted)" }}>{bit(Boolean(row.b))}</td>
               )}
-              <td className="py-1 font-mono font-bold" style={{ color: isActive && row.out ? color : "var(--color-muted)" }}>
-                {row.out ? "1" : "0"}
-              </td>
+              <td className="py-1.5 font-mono font-bold" style={{ color: row.out ? definition.color : "var(--color-muted)" }}>{bit(row.out)}</td>
             </tr>
           );
         })}
@@ -284,70 +195,63 @@ function TruthTable({
   );
 }
 
-function GateCard({ info, delayClass }: { info: GateInfo; delayClass: string }) {
+function GateCard({ definition, delayClass }: { definition: GateDefinition; delayClass: string }) {
   const [a, setA] = useState(false);
   const [b, setB] = useState(false);
-  const theme = themes[info.gate];
-  const out = info.fn(a, b);
-  const gateColor = out ? theme.color : "#555";
+  const out = definition.fn(a, b);
 
   return (
-    <div
+    <article
       className={`gate-card-base animate-fade-in ${delayClass} overflow-hidden`}
-      style={{ borderColor: out ? `${theme.color}50` : "var(--color-border)" }}
+      style={{ borderColor: out ? `${definition.color}66` : "var(--color-border)" }}
     >
-      <div className="p-4 pb-0">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-[11px] font-mono text-muted/50 font-medium tracking-wider">
-            {String(info.index).padStart(2, "0")}
-          </span>
+      <div className="space-y-4 p-4">
+        <header className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.22em] text-muted/70">
+              {String(definition.index).padStart(2, "0")} / {definition.gate}
+            </p>
+            <h3 className="mt-1 text-lg font-semibold">{definition.label}</h3>
+          </div>
           <span
-            className="size-2 rounded-full"
-            style={{
-              background: theme.color,
-              boxShadow: `0 0 8px ${theme.color}80`,
-            }}
+            className="mt-1 size-2.5 shrink-0 rounded-full"
+            style={{ background: definition.color, boxShadow: `0 0 14px ${definition.color}` }}
           />
-          <span className="text-sm font-semibold">{theme.label}</span>
-        </div>
+        </header>
 
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-end gap-2 gap-3">
-            <InputNode label="A" value={a} color={theme.color} onClick={() => setA(!a)} />
-            {info.inputs === 2 && (
-              <InputNode label="B" value={b} color={theme.color} onClick={() => setB(!b)} />
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border border-border/70 bg-background/30 p-3">
+          <div className="flex flex-col gap-2">
+            <SignalButton label="A" value={a} color={definition.color} onToggle={() => setA((value) => !value)} />
+            {definition.inputs === 2 && (
+              <SignalButton label="B" value={b} color={definition.color} onToggle={() => setB((value) => !value)} />
             )}
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-1">
-            <div className="relative flex items-center w-full" style={{ height: 56 }}>
-              <Wires gate={info.gate} a={a} b={b} out={out} color={theme.color} />
-              <div className="relative z-10 mx-auto">
-                <GateSymbol gate={info.gate} color={gateColor} />
-              </div>
+          <div className="relative min-h-28">
+            <WireDiagram definition={definition} a={a} b={b} out={out} />
+            <div className="relative z-10 grid h-28 place-items-center">
+              <GateSymbol gate={definition.gate} color={definition.color} active={out} />
             </div>
           </div>
 
-          <OutputNode value={out} color={theme.color} />
+          <OutputLamp value={out} color={definition.color} />
         </div>
 
-        <div className="text-[11px] text-xs font-mono mb-1.5" style={{ color: "var(--color-muted)" }}>
-          A=<span style={{ color: a ? theme.color : undefined, fontWeight: a ? 700 : 400 }}>{a ? "1" : "0"}</span>
-          {info.inputs === 2 && (
-            <>  B=<span style={{ color: b ? theme.color : undefined, fontWeight: b ? 700 : 400 }}>{b ? "1" : "0"}</span></>
-          )}
-          {" → "}OUT=<span style={{ color: out ? theme.color : undefined, fontWeight: out ? 700 : 400 }}>{out ? "1" : "0"}</span>
+        <div className="space-y-2">
+          <p className="font-mono text-xs text-muted">
+            A=<span style={{ color: a ? definition.color : undefined }}>{bit(a)}</span>
+            {definition.inputs === 2 && <> B=<span style={{ color: b ? definition.color : undefined }}>{bit(b)}</span></>}
+            {" "}→ OUT=<span className="font-bold" style={{ color: out ? definition.color : undefined }}>{bit(out)}</span>
+          </p>
+          <p className="text-sm leading-relaxed text-muted">{definition.description}</p>
+          <p className="rounded-lg border border-border/70 bg-background/30 px-3 py-2 font-mono text-xs text-silver">{definition.rule}</p>
         </div>
-
-        <p className="text-[11px] text-xs leading-relaxed mb-3" style={{ color: "var(--color-muted)" }}>
-          {descriptions[info.gate]}
-        </p>
       </div>
 
-      <div className="px-4 pb-4">
-        <TruthTable info={info} a={a} b={b} color={theme.color} />
+      <div className="border-t border-border/70 px-4 pb-4 pt-3">
+        <TruthTable definition={definition} a={a} b={b} />
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -364,25 +268,27 @@ const delayClasses = [
 
 export default function BasicGatesPage() {
   return (
-    <main className="min-h-dvh px-3 px-4 py-6 sm:py-10">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-dvh px-4 py-6 sm:py-10">
+      <div className="mx-auto max-w-6xl">
         <Link
           href="/logic-gates"
-          className="back-btn inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm"
+          className="back-btn mb-6 inline-flex items-center gap-2 px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-silver"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5" /><polyline points="12 19 5 12 12 5" />
-          </svg>
+          <ArrowLeft aria-hidden="true" className="size-4" />
           Back
         </Link>
 
-        <h2 className="text-2xl text-3xl sm:text-4xl font-bold gradient-text text-center mb-6 sm:mb-8">
-          7 Basic Logic Gates
-        </h2>
+        <header className="mx-auto mb-8 max-w-3xl text-center">
+          <p className="mb-2 font-mono text-xs uppercase tracking-[0.28em] text-muted">Interactive truth tables</p>
+          <h1 className="gradient-text text-3xl font-bold sm:text-5xl">Basic Logic Gates</h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+            Toggle each input and watch the signal path, output lamp, and truth table update together.
+          </p>
+        </header>
 
-        <div className="grid grid-cols-1 grid-cols-2 gap-3 gap-4">
-          {gateDefs.map((info, i) => (
-            <GateCard key={info.gate} info={info} delayClass={delayClasses[i]} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {gateDefinitions.map((definition, index) => (
+            <GateCard key={definition.gate} definition={definition} delayClass={delayClasses[index]} />
           ))}
         </div>
       </div>

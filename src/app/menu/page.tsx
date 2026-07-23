@@ -1,70 +1,67 @@
 import Link from "next/link";
-import { Cpu, Settings, Link2, Music } from "lucide-react";
+import { Cpu, Link2, Music, Settings } from "lucide-react";
+
+const menus = [
+  {
+    label: "Logic Gates",
+    description: "Truth tables, circuits, and gate simulator.",
+    icon: Cpu,
+    href: "/logic-gates",
+    color: "text-neon",
+  },
+  {
+    label: "Gears",
+    description: "Mechanical motion module in progress.",
+    icon: Settings,
+    href: "/coming-soon",
+    color: "text-amber-400",
+  },
+  {
+    label: "Linkage",
+    description: "Joint and lever systems in progress.",
+    icon: Link2,
+    href: "/coming-soon",
+    color: "text-sky-400",
+  },
+  {
+    label: "Music Note",
+    description: "Sound and rhythm module in progress.",
+    icon: Music,
+    href: "/coming-soon",
+    color: "text-orange-400",
+  },
+];
 
 export default function MenuPage() {
-  const menus = [
-    {
-      label: "Logic Gates",
-      icon: Cpu,
-      href: "/logic-gates",
-      color: "text-neon",
-      border: "hover:border-neon",
-      animate: "animate-fade-in-delay-1",
-    },
-    {
-      label: "Gears",
-      icon: Settings,
-      href: "/coming-soon",
-      color: "text-amber-400",
-      border: "hover:border-amber-400",
-      animate: "animate-fade-in-delay-2",
-    },
-    {
-      label: "Linkage",
-      icon: Link2,
-      href: "/coming-soon",
-      color: "text-sky-400",
-      border: "hover:border-sky-400",
-      animate: "animate-fade-in-delay-3",
-    },
-    {
-      label: "Music Note",
-      icon: Music,
-      href: "/coming-soon",
-      color: "text-rose-400",
-      border: "hover:border-rose-400",
-      animate: "animate-fade-in-delay-4",
-    },
-  ];
-
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center px-4 py-12">
-      <div className="flex flex-col items-center gap-10 max-w-lg w-full">
-        <div className="flex flex-col items-center gap-6 animate-fade-in">
-          <h1 className="text-5xl sm:text-6xl font-bold gradient-text text-center">
-            Welcome
-          </h1>
-          <div className="w-56 h-40 sm:w-64 sm:h-44 rounded-2xl border-2 border-dashed border-border bg-surface/50 flex items-center justify-center backdrop-blur-sm">
-            <span className="text-muted text-sm text-center px-4">
-              Insert your image here
-            </span>
-          </div>
+    <main className="center-shell">
+      <section className="w-full max-w-4xl space-y-6">
+        <div className="panel p-6 text-center sm:p-8 animate-slide-up">
+          <p className="kicker">Main menu</p>
+          <h1 className="title-text mt-3 text-4xl font-black sm:text-6xl">Choose a module</h1>
+          <p className="body-copy mx-auto mt-3 max-w-2xl text-sm sm:text-base">
+            Start with Logic Gates. The other learning modules are prepared as separate sections.
+          </p>
         </div>
-        <div className="flex flex-col gap-3 w-full">
-          {menus.map((item) => (
-            <Link key={item.label} href={item.href} className={`animate-fade-in ${item.animate}`}>
-              <div
-                className={`card-btn group flex items-center gap-4 px-5 py-5 ${item.border}`}
-              >
-                <div className={`p-2.5 rounded-xl bg-surface ${item.color}`}>
-                  <item.icon className="size-6" />
-                </div>
-                <span className="text-lg sm:text-xl font-semibold">{item.label}</span>
-              </div>
+
+        <nav aria-label="Learning modules" className="grid gap-3 sm:grid-cols-2">
+          {menus.map((item, index) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`card-btn flex items-center gap-4 p-5 animate-fade-in animate-fade-in-delay-${index + 1}`}
+            >
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-border bg-surface-raised">
+                <item.icon aria-hidden="true" className={`size-6 ${item.color}`} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-lg font-bold text-foreground">{item.label}</span>
+                <span className="mt-1 block text-sm text-muted">{item.description}</span>
+              </span>
             </Link>
           ))}
-        </div>
-      </div>
+        </nav>
+      </section>
     </main>
   );
 }

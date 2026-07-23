@@ -1,46 +1,66 @@
 import Link from "next/link";
-import { ArrowLeft, Cpu, CircuitBoard, FlaskConical } from "lucide-react";
+import { ArrowLeft, CircuitBoard, Cpu, FlaskConical } from "lucide-react";
+
+const lessons = [
+  {
+    title: "Basic Logic Gates",
+    description: "Toggle inputs and inspect each truth table.",
+    href: "/logic-gates/basic-gates",
+    icon: Cpu,
+    accent: "text-neon",
+  },
+  {
+    title: "Logic Gates Circuit",
+    description: "Combine gates into useful multi-input circuits.",
+    href: "/logic-gates/circuit",
+    icon: CircuitBoard,
+    accent: "text-sky-400",
+  },
+  {
+    title: "Create Logic Gates Simulator",
+    description: "Pick one gate and test its input-output behavior.",
+    href: "/logic-gates/simulator",
+    icon: FlaskConical,
+    accent: "text-amber-400",
+    featured: true,
+  },
+];
 
 export default function LogicGatesPage() {
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center px-4 py-12">
-      <div className="flex flex-col items-center gap-8 max-w-lg w-full">
-        <Link href="/menu" className="self-start animate-fade-in">
-          <div className="back-btn flex items-center gap-2 px-4 py-2">
-            <ArrowLeft className="size-4" />
-            <span className="text-sm">Back</span>
-          </div>
+    <main className="center-shell">
+      <section className="w-full max-w-4xl space-y-6">
+        <Link href="/menu" className="back-btn inline-flex items-center gap-2 px-4 py-2 text-sm">
+          <ArrowLeft aria-hidden="true" className="size-4" />
+          Back
         </Link>
-        <h2 className="text-4xl sm:text-5xl font-bold gradient-text text-center animate-fade-in">
-          Logic Gates
-        </h2>
-        <div className="flex flex-col gap-3 w-full">
-          <Link href="/logic-gates/basic-gates" className="animate-fade-in animate-fade-in-delay-1">
-            <div className="card-btn group flex items-center gap-4 px-6 py-6">
-              <div className="p-2.5 rounded-xl bg-neon/10 text-neon">
-                <Cpu className="size-6" />
-              </div>
-              <span className="text-lg sm:text-xl font-semibold">7 Basic Logic Gates</span>
-            </div>
-          </Link>
-          <Link href="/coming-soon" className="animate-fade-in animate-fade-in-delay-2">
-            <div className="card-btn group flex items-center gap-4 px-6 py-6">
-              <div className="p-2.5 rounded-xl bg-sky-400/10 text-sky-400">
-                <CircuitBoard className="size-6" />
-              </div>
-              <span className="text-lg sm:text-xl font-semibold">Logic Gates Circuit</span>
-            </div>
-          </Link>
-          <Link href="/coming-soon" className="animate-fade-in animate-fade-in-delay-3">
-            <div className="card-btn-special group flex items-center gap-4 px-6 py-6">
-              <div className="p-2.5 rounded-xl bg-neon/10 text-neon">
-                <FlaskConical className="size-6" />
-              </div>
-              <span className="text-lg sm:text-xl font-semibold">Create Logic Gates Simulator</span>
-            </div>
-          </Link>
+
+        <div className="panel p-6 sm:p-8 animate-slide-up">
+          <p className="kicker">Digital logic</p>
+          <h1 className="title-text mt-3 text-4xl font-black sm:text-6xl">Logic Gates</h1>
+          <p className="body-copy mt-3 max-w-2xl text-sm sm:text-base">
+            Follow the path from individual gates to practical circuits. Each page is interactive.
+          </p>
         </div>
-      </div>
+
+        <div className="grid gap-3">
+          {lessons.map((lesson, index) => (
+            <Link
+              key={lesson.title}
+              href={lesson.href}
+              className={`${lesson.featured ? "card-btn-special" : "card-btn"} flex items-center gap-4 p-5 animate-fade-in animate-fade-in-delay-${index + 1}`}
+            >
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-border bg-surface-raised">
+                <lesson.icon aria-hidden="true" className={`size-6 ${lesson.accent}`} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-lg font-bold">{lesson.title}</span>
+                <span className="mt-1 block text-sm text-muted">{lesson.description}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
